@@ -54,17 +54,17 @@ exports.Quiz = Quiz;
 // preguntas de la db que es la única tabla que tenemos hasta ahora
 // La forma success es la forma antigua de usar sequelize. Actualmente 
 // se usa lo que se denomina "promesas". Se verán posteriormente
-sequelize.sync().success(function() {
+sequelize.sync().then(function() {
 
-	// success ejecuta el manejador una vez creada la tabla
+	// then ejecuta el manejador una vez creada la tabla
 	// count nos da el número de filas que tiene la tabla
-	Quiz.count().success(function(count) {
+	Quiz.count().then(function(count) {
 
 		// La tabla se inicializa solo si está vacía
 		if(count === 0) {
 			Quiz.create({ pregunta: 'Capital de Italia', 
 						  respuesta: 'Roma'
-			}).success(function(){ console.log('Base de datos inicializada') });
+			}).then(function(){ console.log('Base de datos inicializada') });
 		};
 	});
 });
