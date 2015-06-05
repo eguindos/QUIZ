@@ -9,6 +9,12 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'QUIZ' });
 });
 
+// Autoload de comandos con :quizId - Antes de evaluar los MWs, 
+// param --> si el parámetro quizId existe en la ruta, invoca la 
+// función de autoload. 
+
+router.param('quizId', quizController.load); 
+
 // Rutas de las preguntas y respuestas apuntando a los métodos
 // que se llamarán cuando sean esas las rutas que recibimos en un GET
 // Estos métodos se tiene que exportar de quiz_controller.js (ver arriba) 
