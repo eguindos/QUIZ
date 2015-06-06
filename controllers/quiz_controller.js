@@ -28,12 +28,31 @@ exports.load = function(req, res, next, quizId) {
 // Como desde la última versión, ejecutamos then. Pero, al final de 
 // él usamos el catch que nos pilla los errores que han surgido del
 // proceso de findAll(). Si va bien then. Si error catch
-exports.index = function(req, res) {
-	models.Quiz.findAll().then(
-		function(quizes) {
-			res.render('quizes/index', { quizes: quizes });
-		}
-	).catch(function(error) { next(error); })
+exports.index = function(req, res, next) {
+	// Si el parámetro quiery.busco viene con algo, buscamos
+	if (req.query.busco) {
+		// Preparamos lo que busco sobre la variable buscoMod
+		console.log ("busco " + req.query.busco);
+		var buscoOri = "%"+req.query.busco+"%"; 
+		var buscoMod = buscoOri.replace(/ /g, '%');
+		// Buscamos en la BD lo que nos piden y lo ordenamos de forma descendente
+		models.Quiz.findAll({where: ["pregunta like ?", buscoMod]}, 
+			                {order: 'pregunta DESC'}).then(
+			function(quizes) {
+				console.log("OK - Busqueda pedida: " + req.query.busco + 
+					        " - Lo que buscamos realmente: " + buscoMod);
+				res.render('quizes/index', { quizes: quizes });
+			}
+		).catch(function(error) { next(error); });
+	// Si el parámetro query.busco viene vacío, mostramos todas las preguntas 
+	// Esto se produce al clicar sobre 	'Preguntas'  en el menú lateral                
+	} else {
+		models.Quiz.findAll().then(
+			function(quizes) {
+				res.render('quizes/index', { quizes: quizes });
+			}
+		).catch(function(error) { next(error); })
+	}
 };
 
 // Notar que en los dos MW primeros, usamos un find (en la bd) 
