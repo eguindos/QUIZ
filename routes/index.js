@@ -47,7 +47,7 @@ router.delete('/quizes/:quizId(\\d+)', 		quizController.destroy);
 
 // Créditos
 router.get('/author', function(req, res) {
-	res.render('author', { foto: '/images/foto.gif' });
+	res.render('author', { foto: '/images/foto.gif', errors: [] });
 });
 
 module.exports = router;
