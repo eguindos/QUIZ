@@ -41,7 +41,7 @@ exports.index = function(req, res, next) {
 			function(quizes) {
 				console.log("OK - Busqueda pedida: " + req.query.busco + 
 					        " - Lo que buscamos realmente: " + buscoMod);
-				res.render('quizes/index', { quizes: quizes });
+				res.render('quizes/index', { quizes: quizes, errors: [] });
 			}
 		).catch(function(error) { next(error); });
 	// Si el parámetro query.busco viene vacío, mostramos todas las preguntas 
@@ -49,7 +49,7 @@ exports.index = function(req, res, next) {
 	} else {
 		models.Quiz.findAll().then(
 			function(quizes) {
-				res.render('quizes/index', { quizes: quizes });
+				res.render('quizes/index', { quizes: quizes, errors: [] });
 			}
 		).catch(function(error) { next(error); })
 	}
@@ -63,7 +63,7 @@ exports.index = function(req, res, next) {
 // GET /quizes/:quizId
 exports.show = function(req, res) {
 	models.Quiz.find(req.params.quizId).then(function(quiz) {
-		res.render('quizes/show', { quiz: req.quiz });
+		res.render('quizes/show', { quiz: req.quiz, errors: [] });
 	})
 };
 
@@ -74,7 +74,7 @@ exports.answer = function(req, res) {
 	if (req.query.respuesta === req.quiz.respuesta) {
 		resultado = 'Correcto'
 	}
-	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado});
+	res.render('quizes/answer', { quiz: req.quiz, respuesta: resultado, errors: [] });
 };
 
 // GET /quizes/new - Controlador para la creación de preguntas
@@ -83,17 +83,24 @@ exports.new = function(req, res) {
 	var quiz = models.Quiz.build(
 		{pregunta: "Pregunta", respuesta: "Respuesta"}
 	);
-	res.render('quizes/new', {quiz: quiz});
+	res.render('quizes/new', { quiz: quiz, errors: [] });
 };
 
 // POST /quizes/create --> Para crear algo hay que usar post según REST.
 exports.create = function(req, res) {
-	var quiz = models.Quiz.build(req.body.quiz);
-	// Guradar en DB los camos de quiz - solo los campos preguntas y respuestas
+	// Extraemos pregunta y respuesta del body
+	var quiz = models.Quiz.build(req.body.quiz)
+	// Guradar en DB los camos de quiz - solo los campos preguntas y respuestas	
 	// esto es para evitar que nos metan otros campos que pudiesen tener virus
-	quiz.save({fields: ["pregunta", "respuesta"]}).then(function() {
-		res.redirect('/quizes'); 
-	})
+	// Hacemos validación previa por si se produjo error al meter datos
+	quiz.validate().then(function(err) {
+		if (err) {
+			res.render('quizes/new', {quiz: quiz, errors: err.errors});
+		} else {
+			quiz.save({fields: ["pregunta", "respuesta"]}).then(function() {
+			res.redirect('/quizes')})	
+		}
+	});
 };
 
 
