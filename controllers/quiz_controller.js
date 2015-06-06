@@ -81,7 +81,7 @@ exports.answer = function(req, res) {
 exports.new = function(req, res) {
 	// Objeto quiz
 	var quiz = models.Quiz.build(
-		{pregunta: "Pregunta", respuesta: "Respuesta"}
+		{ pregunta: "Pregunta", respuesta: "Respuesta", tema: "Otro" }
 	);
 	res.render('quizes/new', { quiz: quiz, errors: [] });
 };
@@ -97,7 +97,7 @@ exports.create = function(req, res) {
 		if (err) {
 			res.render('quizes/new', {quiz: quiz, errors: err.errors});
 		} else {
-			quiz.save({fields: ["pregunta", "respuesta"]}).then(function() {
+			quiz.save({fields: ["pregunta", "respuesta", "tema"]}).then(function() {
 			res.redirect('/quizes')})	
 		}
 	});
@@ -117,6 +117,7 @@ exports.update = function(req, res) {
 	// Extraemos pregunta y respuesta de la solicitud que está en el body
 	req.quiz.pregunta  = req.body.quiz.pregunta;
 	req.quiz.respuesta = req.body.quiz.respuesta;
+	req.quiz.tema      = req.body.quiz.tema;
 
 	// Validamos y salvamos
 	req.quiz.validate().then(function(err) {
@@ -125,7 +126,7 @@ exports.update = function(req, res) {
 		} else {
 			// Ojo, solo salvamos los campos que necesitamos para evitar que se 
 			// metan otros campos con virus.
-			req.quiz.save( { fields: ["pregunta", "respuesta"]}).then(function() {
+			req.quiz.save( { fields: ["pregunta", "respuesta", "tema"]}).then(function() {
 				res.redirect('/quizes');
 			});
 		}
@@ -140,33 +141,3 @@ exports.destroy = function(req, res) {
 		res.redirect('/quizes');
 	}).catch(function(error) {next(error)});
 };
-
-/*
-
-// Dejo la forma antigua para referencia
-
-// GET /quizes/question
-exports.question = function(req, res) {
-	// Buscamos la pregunta de la tabla de la BD. 
-	models.Quiz.findAll().then(function(quiz) {
-		// Solo tenemos una pregunta, así que estará en el índice 0
-		// En views/quizes/question está la página con el formulario
-		res.render('quizes/question', { pregunta: quiz[0].pregunta });
-	})
-};
-*/
-/*
-// GET /quizes/answer
-// La respuesta llega en un GET ==> en la cabecera ==> res.query.respuesta
-exports.answer = function(req, res) {
-	models.Quiz.findAll().then(function(quiz) {
-		// Nuevamente solo tenemos una respuesta que estará en el índice 0
-		// En views/quizes/answer está la página con el resultado
-		if (req.query.respuesta === quiz[0].respuesta) {
-			res.render('quizes/answer', {respuesta: 'Correcto'});
-		} else {
-			res.render('quizes/answer', {respuesta: 'Incorrecto'});
-		}
-	})
-};
-*/
