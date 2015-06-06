@@ -20,7 +20,7 @@ app.set('view engine', 'ejs');
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded()); // Quitamos el extended = false, para tratar bien los pars del body
 app.use(cookieParser());
 app.use(partials());
 app.use(express.static(path.join(__dirname, 'public')));

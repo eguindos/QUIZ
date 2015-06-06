@@ -69,12 +69,33 @@ exports.show = function(req, res) {
 
 // GET /quizes/:quizId/answer
 exports.answer = function(req, res) {
+	console.log("Respuesta: " + req.query.respuesta  + " - La correcta es: " + req.quiz.respuesta);
 	var resultado = 'Incorrecto'
 	if (req.query.respuesta === req.quiz.respuesta) {
 		resultado = 'Correcto'
 	}
 	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado});
 };
+
+// GET /quizes/new - Controlador para la creación de preguntas
+exports.new = function(req, res) {
+	// Objeto quiz
+	var quiz = models.Quiz.build(
+		{pregunta: "Pregunta", respuesta: "Respuesta"}
+	);
+	res.render('quizes/new', {quiz: quiz});
+};
+
+// POST /quizes/create --> Para crear algo hay que usar post según REST.
+exports.create = function(req, res) {
+	var quiz = models.Quiz.build(req.body.quiz);
+	// Guradar en DB los camos de quiz - solo los campos preguntas y respuestas
+	// esto es para evitar que nos metan otros campos que pudiesen tener virus
+	quiz.save({fields: ["pregunta", "respuesta"]}).then(function() {
+		res.redirect('/quizes'); 
+	})
+};
+
 
 /*
 
