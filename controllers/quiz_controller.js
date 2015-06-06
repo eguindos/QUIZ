@@ -103,6 +103,34 @@ exports.create = function(req, res) {
 	});
 };
 
+// GET quizes/:quizId/edit - Edición de preguntas
+// El identificador dispara automáticamente el autoload, por lo que el 
+// objeto quiz se construirá con el elemento de la tabla 
+exports.edit = function(req, res) {
+	var quiz = req.quiz;
+	res.render('quizes/edit', {quiz: quiz, errors: [] });
+};
+
+// PUT /quizes/:quizId - DB Update - Parecido a create
+exports.update = function(req, res) {
+
+	// Extraemos pregunta y respuesta de la solicitud que está en el body
+	req.quiz.pregunta  = req.body.quiz.pregunta;
+	req.quiz.respuesta = req.body.quiz.respuesta;
+
+	// Validamos y salvamos
+	req.quiz.validate().then(function(err) {
+		if(err) {
+			res.render('quizes/edit', { quiz: req.quiz, errors: err.errors });
+		} else {
+			// Ojo, solo salvamos los campos que necesitamos para evitar que se 
+			// metan otros campos con virus.
+			req.quiz.save( { fields: ["pregunta", "respuesta"]}).then(function() {
+				res.redirect('/quizes');
+			});
+		}
+	});
+};
 
 /*
 
