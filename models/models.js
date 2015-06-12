@@ -40,15 +40,27 @@ var sequelize = new Sequelize(DB_name, user, pwd,
 
 	);
 
-// Importar la definición de la tabla Quiz de quiz.js
+// Importar la definición de la tabla Quiz de quiz.js para construirla
 // El objeto de tipo Quiz podŕá así acceder a los elementos 
 // de la tabla definida en quiz.js.
 //var quiz_path = path.join(__dirname, 'quiz');
-var Quiz = sequelize.import(path.join(__dirname, 'quiz'));
+var quiz_path = path.join(__dirname, 'quiz');  // Esto es nuevo en tema comments
+//var Quiz = sequelize.import(path.join(__dirname, 'quiz'));
+var Quiz = sequelize.import(quiz_path); 
 
-// Exportar la definición de la tabla Quiz
+// Importamos la definición de la tabla comment.js para construirla
+var comment_path = path.join(__dirname, 'comment');
+var Comment = sequelize.import(comment_path);
+
+// Relación de tipo 1-a-N entre Quiz y Comment
+
+Comment.belongsTo(Quiz);	// Parte 1 - Los comentarios pertenecen a las preguntas
+Quiz.hasMany(Comment);		// Parte N - Una pregunta puede tener muchos comentarios
+
+// Exportar la definición de la tabla Quiz y la de Comment
 // Esto es para que se pueda importar en otros lugares de la aplicación
 exports.Quiz = Quiz; 
+exports.Comment = Comment;
 
 // sequelize.sync() crea e inicializa la bd y, por tanto, la tabla de 
 // preguntas de la db que es la única tabla que tenemos hasta ahora

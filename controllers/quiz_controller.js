@@ -13,7 +13,10 @@ var models = require('../models/models.js');
 // que los siguiente MW sepan de lo que hablamos con solo consultar 
 // esa variable req.quiz. Si algo va mal, lo mostramos.
 exports.load = function(req, res, next, quizId) {
-	models.Quiz.find(quizId).then(
+	models.Quiz.find({
+		where: { id: Number(quizId) },
+		include: [{ model: models.Comment }]
+	}).then(
 		function(quiz) {
 			if (quiz) {
 				req.quiz = quiz; 
