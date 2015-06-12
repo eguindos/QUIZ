@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
-// Importamos el controlador de las preguntas (quiz_controller.js) 
+// Importamos el controlador de las preguntas (quiz_controller.js) y
+// los controladores de los comentarios y las sesiones
 var quizController = require('../controllers/quiz_controller');
 var commentController = require('../controllers/comment_controller');
+var sessionController = require('../controllers/session_controller');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -51,7 +53,12 @@ router.delete('/quizes/:quizId(\\d+)', 		quizController.destroy);
 router.get('/quizes/:quizId(\\d+)/comments/new', commentController.new);
 router.post('/quizes/:quizId(\\d+)/comments',    commentController.create);
 
-// Créditos
+// Rutas asociadas a la parte de la sesión
+router.get('/login', 	sessionController.new); 
+router.post('/login',	sessionController.create);
+router.get('/logout', 	sessionController.destroy);
+
+// Rutas de Créditos
 router.get('/author', function(req, res) {
 	res.render('author', { foto: '/images/foto.gif', errors: [] });
 });
