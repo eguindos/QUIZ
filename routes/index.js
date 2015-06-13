@@ -15,8 +15,11 @@ router.get('/', function(req, res) {
 // Autoload de comandos con :quizId - Antes de evaluar los MWs, 
 // param --> si el parámetro quizId existe en la ruta, invoca la 
 // función de autoload. 
-
 router.param('quizId', quizController.load); 
+
+// MW de Autoload de comentarios para que el comentario esté pregargado
+// al ejecutar la acción de publish
+router.param('commentId', commentController.load);
 
 // Rutas de las preguntas y respuestas apuntando a los métodos
 // que se llamarán cuando sean esas las rutas que recibimos en un GET
@@ -52,6 +55,12 @@ router.delete('/quizes/:quizId(\\d+)', 		sessionController.loginRequired, quizCo
 // otra para la creación del comentario (post)
 router.get('/quizes/:quizId(\\d+)/comments/new', commentController.new);
 router.post('/quizes/:quizId(\\d+)/comments',    commentController.create);
+router.get('/quizes/:quizId(\\d+)/comments/:commentId(\\d+)/publish', 
+	       sessionController.loginRequired, commentController.publish); // Se requiere autenticación. Si no se está
+	       																// autenticado, el MW loginRequired saca 
+	       																// la pantalla de autenticación y para. Si se 
+	       																// está autenticado, se pasa al siguiente MW, 
+	       																// en este caso publish
 
 // Rutas asociadas a la parte de la sesión
 router.get('/login', 	sessionController.new); 
