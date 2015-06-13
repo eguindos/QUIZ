@@ -42,6 +42,30 @@ app.use(function(req, res, next) {
     next();
 });
 
+// Control de tiempo de sesión para auto-logout
+// Miramos el timestamp actual y, una vez tengamos abierta una sesión, iniciamos la cuenta atrás (30 segundos)
+app.use(function(req, res, next) {
+    var ahora = Math.floor(Date.now()/1000) || function() {return new Math.floor(Date().getTime()/1000)};
+    var date = new Date;
+
+    res.locals.dt = date.toTimeString().slice(0, 5) + " Sin sesión";
+    
+    // Si hay sesión, reiniciamos el contador de 30 segundos
+
+    if (res.locals.session.user) {
+        if (ahora > expira) { 
+            console.log("*** Auto-logout de sesion ***");
+            res.redirect("/logout");
+        } else {
+            res.locals.dt = res.locals.dt.slice(0, 5) + " Sesión activa";
+        }
+        expira = ahora + 30;  // Reiniciamos el contador de 30 segundos de inactividad
+
+    } else { expira = 9999999999999; }
+
+    next();
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler

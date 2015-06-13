@@ -33,6 +33,11 @@ exports.create = function(req, res) {
 
 		// Crear req.session.user y guardar campos id y username
 		req.session.user = {id:user.id, username:user.username};
+
+		// Hora de comienzo de la sesión: 
+		req.session.ts = Math.floor(Date.now()/1000) || function() {return new Math.floor(Date().getTime()/1000)};
+
+		// Redireccionamiento
 		res.redirect(req.session.redir.toString()); // Redirecc. a path anterior a login
 	});
 };
