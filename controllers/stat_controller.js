@@ -41,7 +41,7 @@ exports.comentadas = function(req, res, next) {
 	for (var i = 1; i <= res.locals.totQuizes ; i++ ) {
 
 		models.Comment.count({
-			where: "QuizId = " + i
+			where: "id = " + i
 		}).then(function(qid) {
 			console.log("OK - Total QID (" + j++ +"): " + qid);
 			if (qid === 0) res.locals.sc++; else res.locals.cc++;
