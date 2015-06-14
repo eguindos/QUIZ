@@ -6,6 +6,7 @@ var router = express.Router();
 var quizController = require('../controllers/quiz_controller');
 var commentController = require('../controllers/comment_controller');
 var sessionController = require('../controllers/session_controller');
+var statController = require('../controllers/stat_controller');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -66,6 +67,10 @@ router.get('/quizes/:quizId(\\d+)/comments/:commentId(\\d+)/publish',
 router.get('/login', 	sessionController.new); 
 router.post('/login',	sessionController.create);
 router.get('/logout', 	sessionController.destroy);
+
+// Ruta de estadísticas
+router.get('/quizes/statistics', statController.totQzs, statController.totComs, 
+								 statController.comentadas);
 
 // Rutas de Créditos
 router.get('/author', function(req, res) {
