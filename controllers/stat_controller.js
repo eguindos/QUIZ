@@ -36,7 +36,7 @@ exports.comentadas = function(req, res, next) {
 
 	res.locals.sc = 0;
 	res.locals.cc = 0;
-	var j = 1;
+	var j = 1;  
 
 	for (var i = 1; i <= res.locals.totQuizes ; i++ ) {
 
